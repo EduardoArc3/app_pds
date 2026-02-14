@@ -1,7 +1,11 @@
+import 'package:app_pds/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'screens/InitialSplash.dart';
 
-void main() {
+void main() async {
+  // inicializar base de datos
+  await DatabaseService.instance.initDB();
+
   runApp(const MyApp());
 }
 
