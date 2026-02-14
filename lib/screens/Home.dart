@@ -26,7 +26,7 @@ class _Home extends State<Home> {
   //LISTA DINAMICA
   List<Map<String, String>> notes = [];
 
-  @override //construye la interfaz
+  @override //Build Interface
   Widget build(BuildContext context) {
     return Scaffold(
       //Scaffold proporciona la estructura base del screen
@@ -150,15 +150,19 @@ class _Home extends State<Home> {
 
   Widget addNoteCard() {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          notes.add({
-            "title": "Nota ${notes.length + 1}",
-            "content": "Contenido de la nota",
-            "date": DateTime.now().toString(),
+      onTap: () async {
+        final newNote = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Addnotes()),
+        );
+
+        if (newNote != null) {
+          setState(() {
+            notes.add(newNote);
           });
-        });
+        }
       },
+
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
