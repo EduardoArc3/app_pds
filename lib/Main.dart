@@ -4,6 +4,9 @@ import 'screens/InitialSplash.dart';
 
 void main() async {
   // inicializar base de datos
+
+  WidgetsFlutterBinding.ensureInitialized();
+
   await DatabaseService.instance.initDB();
 
   runApp(const MyApp());

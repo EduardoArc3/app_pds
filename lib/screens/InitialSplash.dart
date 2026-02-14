@@ -9,61 +9,116 @@ class Initialsplash extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1E3A8A),
 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/images/Logouson.png', width: 400),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
 
-            const SizedBox(height: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Image.asset('assets/images/Logouson.png', width: 400),
 
-            const Text(
-              "Notas - UNISON",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              const SizedBox(height: 30),
 
-            const SizedBox(height: 10),
-
-            const Text(
-              "Equipo",
-              style: TextStyle(
-                color: Color.fromARGB(255, 251, 247, 247),
-                fontSize: 16,
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 50,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Home()),
-                );
-              },
-              child: const Text(
-                "Iniciar",
+              const Text(
+                "Notas - UNISON",
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color.fromARGB(255, 251, 247, 247),
-                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 10),
+
+              Column(
+                children: const [
+                  Text(
+                    "Equipo de Desarrollo",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+
+                  SizedBox(height: 15),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.person, color: Colors.amber, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        "Arce Gaxiola Angel Eduardo",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.person, color: Colors.amber, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        "Montaño Lares Jessica",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const Spacer(),
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    elevation: 6,
+                    shadowColor: Colors.black45,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
+                  },
+                  child: const Text(
+                    "Iniciar",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
