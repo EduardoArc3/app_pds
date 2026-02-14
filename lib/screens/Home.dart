@@ -18,7 +18,7 @@ class _Home extends State<Home> {
     const Color(0xFFA88CC5),
     const Color(0xFFB97BA5),
     const Color.fromARGB(255, 133, 163, 228),
-    const Color.fromARGB(255, 0, 0, 0),
+    const Color.fromARGB(255, 238, 142, 142),
     const Color.fromARGB(255, 34, 173, 233),
     const Color.fromARGB(255, 16, 45, 108),
   ];
@@ -94,6 +94,7 @@ class _Home extends State<Home> {
                                   return noteCard(
                                     notes[index]['title']!,
                                     notes[index]['content']!,
+                                    notes[index]['date']!,
                                     noteColors[index % noteColors.length],
                                   );
                                 },
@@ -113,7 +114,11 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget noteCard(String title, String content, Color color) {
+  Widget noteCard(String title, String content, String date, Color color) {
+    DateTime parsedDate = DateTime.parse(date);
+    String formattedDate =
+        "${parsedDate.day}/${parsedDate.month}/${parsedDate.year}";
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(17),
@@ -137,7 +142,7 @@ class _Home extends State<Home> {
               Text(content),
             ],
           ),
-          const Text("Fecha"),
+          Text(formattedDate),
         ],
       ),
     );
@@ -150,6 +155,7 @@ class _Home extends State<Home> {
           notes.add({
             "title": "Nota ${notes.length + 1}",
             "content": "Contenido de la nota",
+            "date": DateTime.now().toString(),
           });
         });
       },
