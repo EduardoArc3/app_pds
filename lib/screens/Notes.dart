@@ -31,6 +31,7 @@ class _Addnotes extends State<Addnotes> {
       "title": title.text,
       "content": content.text,
       "date": DateTime.now().toString(),
+      "color": selectedColor.value,
     });
   }
 

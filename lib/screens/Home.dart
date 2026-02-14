@@ -24,7 +24,7 @@ class _Home extends State<Home> {
   ];
 
   //LISTA DINAMICA
-  List<Map<String, String>> notes = [];
+  List<Map<String, dynamic>> notes = [];
 
   @override //Build Interface
   Widget build(BuildContext context) {
@@ -95,7 +95,11 @@ class _Home extends State<Home> {
                                     notes[index]['title']!,
                                     notes[index]['content']!,
                                     notes[index]['date']!,
-                                    noteColors[index % noteColors.length],
+                                    Color(
+                                      notes[index]['color'] ??
+                                          noteColors[index % noteColors.length]
+                                              .value,
+                                    ),
                                   );
                                 },
                               ),
