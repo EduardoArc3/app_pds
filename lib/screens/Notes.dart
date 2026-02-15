@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:app_pds/models/note.dart';
+import 'package:app_pds/services/database_service.dart';
 
 class Addnotes extends StatefulWidget {
   const Addnotes({super.key});
@@ -12,8 +14,9 @@ class _Addnotes extends State<Addnotes> {
       TextEditingController(); //TextEditingController get the text of TextField
   final TextEditingController content = TextEditingController();
 
-  Color selectedColor = const Color.fromARGB(255, 254, 255, 255);
+  Color selectedColor = const Color.fromARGB(255, 255, 255, 255);
 
+  //Available Colors for your selection
   final List<Color> colors = [
     const Color(0xFF8FA3C9),
     const Color(0xFF8EC5B6),
@@ -21,18 +24,24 @@ class _Addnotes extends State<Addnotes> {
     const Color(0xFFB97BA5),
   ];
 
-  void saveNote() {
+  //Execute [Aceptar]
+  void saveNote() async {
     if (title.text.isEmpty && content.text.isEmpty) {
       Navigator.pop(context); //Navigator.pop(context) return a former page
       return;
     }
 
-    Navigator.pop(context, {
-      "title": title.text,
-      "content": content.text,
-      "date": DateTime.now().toString(),
-      "color": selectedColor.value,
-    });
+    //create a new note with this info
+    final newNote = Note(
+      title: title.text,
+      description: content.text,
+      color: selectedColor.value,
+      createdAt: DateTime.now(),
+      isPinned: false,
+    );
+    //insert the new note in SqLite used Databaservicesuwu
+    await DatabaseService.instance.insertNote(newNote);
+    Navigator.pop(context, true);
   }
 
   @override
@@ -40,6 +49,7 @@ class _Addnotes extends State<Addnotes> {
     return Scaffold(
       backgroundColor: const Color(0xFF2E4FA2),
 
+      //DESIGN
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -107,11 +117,13 @@ class _Addnotes extends State<Addnotes> {
 
                 const SizedBox(height: 20),
 
+                //ColorMap
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: colors.map((color) {
                     return GestureDetector(
                       onTap: () {
+                        //change color when pressed
                         setState(() {
                           selectedColor = color;
                         });

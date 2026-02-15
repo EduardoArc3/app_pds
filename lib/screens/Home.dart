@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:app_pds/screens/InitialSplash.dart';
 import 'package:flutter/material.dart';
+import 'package:app_pds/services/database_service.dart';
+import 'package:app_pds/models/note.dart';
+
 import 'Notes.dart';
 
 class Home extends StatefulWidget {
@@ -23,8 +26,74 @@ class _Home extends State<Home> {
     const Color.fromARGB(255, 16, 45, 108),
   ];
 
-  //LISTA DINAMICA
-  List<Map<String, dynamic>> notes = [];
+  //LIST to work with databaseee
+  List<Note> notes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadNotes(); //load information of database
+  }
+
+  Future<void> loadNotes() async {
+    final data = await DatabaseService.instance
+        .queryAllNotes(); //Consult the database, and return all the saved notes
+
+    setState(() {
+      notes = data.map((e) => Note.fromMap(e)).toList();
+    });
+  }
+
+  //Modal press a note
+  void showNoteOptions(Note note) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ///delete
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text(
+                  "Eliminar",
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  await DatabaseService.instance.deleteNote(
+                    note.id!,
+                  ); //delete from database
+                  Navigator.pop(context);
+                  loadNotes();
+                },
+              ),
+
+              const Divider(),
+
+              ///FIJAR
+              const ListTile(
+                leading: Icon(Icons.push_pin_outlined),
+                title: Text("Fijar nota"),
+              ),
+
+              ///DUPLICAR
+              const ListTile(
+                leading: Icon(Icons.copy),
+                title: Text("Duplicar nota"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override //Build Interface
   Widget build(BuildContext context) {
@@ -84,26 +153,25 @@ class _Home extends State<Home> {
                       ),
 
                       const SizedBox(height: 15),
-                      //Lista Dinamica
+                      //List Viewer.builder
                       Expanded(
                         child: notes.isEmpty
                             ? const Center(child: Text("No hay notas aún"))
                             : ListView.builder(
                                 itemCount: notes.length,
                                 itemBuilder: (context, index) {
-                                  return noteCard(
-                                    notes[index]['title']!,
-                                    notes[index]['content']!,
-                                    notes[index]['date']!,
-                                    Color(
-                                      notes[index]['color'] ??
-                                          noteColors[index % noteColors.length]
-                                              .value,
-                                    ),
+                                  final note = notes[index];
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showNoteOptions(note);
+                                    },
+                                    child: noteCard(note),
                                   );
                                 },
                               ),
                       ),
+
                       const SizedBox(height: 10),
 
                       addNoteCard(),
@@ -118,35 +186,44 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget noteCard(String title, String content, String date, Color color) {
-    DateTime parsedDate = DateTime.parse(date);
+  Widget noteCard(Note note) {
     String formattedDate =
-        "${parsedDate.day}/${parsedDate.month}/${parsedDate.year}";
+        "${note.createdAt.day}/${note.createdAt.month}/${note.createdAt.year}";
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: color,
+        color: Color(note.color),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
+          ///TEXT
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  note.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
                 ),
-              ),
-              Text(content),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  note.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-          Text(formattedDate),
+
+          ///DATE
+          Text(formattedDate, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );
@@ -155,15 +232,13 @@ class _Home extends State<Home> {
   Widget addNoteCard() {
     return GestureDetector(
       onTap: () async {
-        final newNote = await Navigator.push(
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Addnotes()),
         );
 
-        if (newNote != null) {
-          setState(() {
-            notes.add(newNote);
-          });
+        if (result == true) {
+          loadNotes();
         }
       },
 
