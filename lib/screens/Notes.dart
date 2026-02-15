@@ -3,18 +3,45 @@ import 'package:app_pds/models/note.dart';
 import 'package:app_pds/services/database_service.dart';
 
 class Addnotes extends StatefulWidget {
-  const Addnotes({super.key});
+  final Note? editingNote;
+
+  const Addnotes({super.key, this.editingNote});
 
   @override
   State<Addnotes> createState() => _Addnotes();
 }
 
 class _Addnotes extends State<Addnotes> {
-  final TextEditingController title =
-      TextEditingController(); //TextEditingController get the text of TextField
-  final TextEditingController content = TextEditingController();
+  late final TextEditingController
+  title; //TextEditingController get the text of TextField
+  late final TextEditingController content;
+  late Color selectedColor;
 
-  Color selectedColor = const Color.fromARGB(255, 255, 255, 255);
+  bool get isEditing => widget.editingNote != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    title = TextEditingController();
+    content = TextEditingController();
+
+    if (isEditing) {
+      final note = widget.editingNote!;
+      title.text = note.title;
+      content.text = note.description;
+      selectedColor = Color(note.color);
+    } else {
+      selectedColor = const Color.fromARGB(255, 255, 255, 255);
+    }
+  }
+
+  @override
+  void dispose() {
+    title.dispose();
+    content.dispose();
+    super.dispose();
+  }
 
   //Available Colors for your selection
   final List<Color> colors = [
@@ -31,16 +58,31 @@ class _Addnotes extends State<Addnotes> {
       return;
     }
 
-    //create a new note with this info
-    final newNote = Note(
-      title: title.text,
-      description: content.text,
-      color: selectedColor.value,
-      createdAt: DateTime.now(),
-      isPinned: false,
-    );
-    //insert the new note in SqLite used Databaservicesuwu
-    await DatabaseService.instance.insertNote(newNote);
+    // editar nota
+    if (isEditing) {
+      final updatedNote = Note(
+        id: widget.editingNote!.id,
+        title: title.text,
+        description: content.text,
+        color: selectedColor.value,
+        createdAt: widget.editingNote!.createdAt,
+        isPinned: widget.editingNote!.isPinned,
+      );
+
+      await DatabaseService.instance.updateNote(updatedNote);
+    } else {
+      //create a new note with this info
+      final newNote = Note(
+        title: title.text,
+        description: content.text,
+        color: selectedColor.value,
+        createdAt: DateTime.now(),
+        isPinned: false,
+      );
+      //insert the new note in SqLite used Databaservicesuwu
+      await DatabaseService.instance.insertNote(newNote);
+    }
+
     Navigator.pop(context, true);
   }
 
@@ -68,8 +110,8 @@ class _Addnotes extends State<Addnotes> {
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
-                      "Nueva nota",
+                    Text(
+                      isEditing ? "Editar nota" : "Nueva nota",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

@@ -59,22 +59,51 @@ class _Home extends State<Home> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ///delete
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text(
-                  "Eliminar",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onTap: () async {
-                  await DatabaseService.instance.deleteNote(
-                    note.id!,
-                  ); //delete from database
-                  Navigator.pop(context);
-                  loadNotes();
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      leading: const Icon(Icons.delete, color: Colors.red),
+                      title: const Text(
+                        "Eliminar",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onTap: () async {
+                        await DatabaseService.instance.deleteNote(
+                          note.id!,
+                        ); //delete from database
+                        Navigator.pop(context);
+                        loadNotes();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: ListTile(
+                      leading: const Icon(Icons.edit, color: Colors.blue),
+                      title: const Text(
+                        "Editar",
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onTap: () async {
+                        // abrir formulario de edición
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Addnotes(editingNote: note),
+                          ),
+                        );
+
+                        if (result == true) {
+                          Navigator.pop(context);
+                          loadNotes();
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
 
+              ///delete
               const Divider(),
 
               ///FIJAR
