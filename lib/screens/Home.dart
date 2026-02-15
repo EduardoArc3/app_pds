@@ -26,6 +26,10 @@ class _Home extends State<Home> {
     const Color.fromARGB(255, 16, 45, 108),
   ];
 
+  TextEditingController search = TextEditingController();
+
+  List<Note> filteredNotes = [];
+
   //LIST to work with databaseee
   List<Note> notes = [];
 
@@ -39,8 +43,13 @@ class _Home extends State<Home> {
     final data = await DatabaseService.instance
         .queryAllNotes(); //Consult the database, and return all the saved notes
 
+    final loadedNotes = data
+        .map((e) => Note.fromMap(e))
+        .toList(); //Convert the map in notes
+
     setState(() {
-      notes = data.map((e) => Note.fromMap(e)).toList();
+      notes = loadedNotes;
+      filteredNotes = loadedNotes; //show all notes
     });
   }
 
@@ -148,15 +157,58 @@ class _Home extends State<Home> {
           padding: const EdgeInsets.all(17),
           child: Column(
             children: [
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Buscar",
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: search,
+
+                  onChanged: (value) {
+                    final query = value.toLowerCase();
+
+                    setState(() {
+                      filteredNotes = notes.where((note) {
+                        final titleMatch = note.title.toLowerCase().contains(
+                          query,
+                        );
+
+                        final descriptionMatch = note.description
+                            .toLowerCase()
+                            .contains(query);
+
+                        final dateString =
+                            "${note.createdAt.day}/${note.createdAt.month}/${note.createdAt.year}";
+
+                        final dateMatch = dateString.contains(query);
+
+                        return titleMatch || descriptionMatch || dateMatch;
+                      }).toList();
+                    });
+                  },
+
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF2E2E2E),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Buscar notas...",
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    prefixIcon: const Icon(
+                      Icons.search_rounded,
+                      color: Color(0xFF7A8FA6),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               ),
@@ -184,12 +236,18 @@ class _Home extends State<Home> {
                       const SizedBox(height: 15),
                       //List Viewer.builder
                       Expanded(
-                        child: notes.isEmpty
-                            ? const Center(child: Text("No hay notas aún"))
+                        child: filteredNotes.isEmpty
+                            ? Center(
+                                child: Text(
+                                  search.text.isEmpty
+                                      ? "No hay notas aún"
+                                      : "No se encontraron resultados",
+                                ),
+                              )
                             : ListView.builder(
-                                itemCount: notes.length,
+                                itemCount: filteredNotes.length,
                                 itemBuilder: (context, index) {
-                                  final note = notes[index];
+                                  final note = filteredNotes[index];
 
                                   return GestureDetector(
                                     onTap: () {

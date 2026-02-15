@@ -32,7 +32,7 @@ class _Addnotes extends State<Addnotes> {
       content.text = note.description;
       selectedColor = Color(note.color);
     } else {
-      selectedColor = const Color.fromARGB(255, 255, 255, 255);
+      selectedColor = const Color.fromARGB(126, 237, 234, 234);
     }
   }
 
@@ -45,10 +45,10 @@ class _Addnotes extends State<Addnotes> {
 
   //Available Colors for your selection
   final List<Color> colors = [
-    const Color(0xFF8FA3C9),
-    const Color(0xFF8EC5B6),
-    const Color(0xFFA88CC5),
-    const Color(0xFFB97BA5),
+    const Color(0xFF9BB7E0),
+    const Color(0xFF9ED9C8),
+    const Color(0xFFB9A3E3),
+    const Color(0xFFE2A7C7),
   ];
 
   //Execute [Aceptar]
@@ -58,15 +58,27 @@ class _Addnotes extends State<Addnotes> {
       return;
     }
 
-    // editar nota
+    // Edit Note
     if (isEditing) {
+      final original = widget.editingNote!;
+
+      final isChanged =
+          title.text != original.title ||
+          content.text != original.description ||
+          selectedColor.value != original.color;
+
+      if (!isChanged) {
+        Navigator.pop(context); //NO ACTION IF NOT HAS CHANGES
+        return;
+      }
+
       final updatedNote = Note(
-        id: widget.editingNote!.id,
+        id: original.id,
         title: title.text,
         description: content.text,
         color: selectedColor.value,
-        createdAt: widget.editingNote!.createdAt,
-        isPinned: widget.editingNote!.isPinned,
+        createdAt: DateTime.now(), // 👈 ahora representa última modificación
+        isPinned: original.isPinned,
       );
 
       await DatabaseService.instance.updateNote(updatedNote);
@@ -134,6 +146,12 @@ class _Addnotes extends State<Addnotes> {
                       children: [
                         TextField(
                           controller: title,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                            color: Color(0xFF2E2E2E),
+                          ),
                           decoration: const InputDecoration(
                             hintText: "Titulo",
                             border: InputBorder.none,
@@ -146,6 +164,13 @@ class _Addnotes extends State<Addnotes> {
                             controller: content,
                             maxLines: null,
                             expands: true,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.5,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF2F2F2F),
+                            ),
                             decoration: const InputDecoration(
                               hintText: "Contenido",
                               border: InputBorder.none,
@@ -198,6 +223,13 @@ class _Addnotes extends State<Addnotes> {
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 203, 246, 205),
                             borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: const Center(
                             child: Text(
@@ -205,7 +237,7 @@ class _Addnotes extends State<Addnotes> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: Color.fromARGB(255, 154, 160, 171),
+                                color: Color(0xFF3F6B4F),
                               ),
                             ),
                           ),
@@ -223,6 +255,13 @@ class _Addnotes extends State<Addnotes> {
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 248, 197, 197),
                             borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: const Center(
                             child: Text(
@@ -230,7 +269,7 @@ class _Addnotes extends State<Addnotes> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: Color.fromARGB(255, 229, 102, 90),
+                                color: const Color(0xFF9C4A4A),
                               ),
                             ),
                           ),
