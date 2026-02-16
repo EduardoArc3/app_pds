@@ -70,20 +70,30 @@ class _Home extends State<Home> {
                 children: [
                   Expanded(
                     child: ListTile(
-                      leading: const Icon(Icons.delete, color: Colors.red),
+                      leading: const Icon(
+                        Icons.delete,
+                        color: Color.fromARGB(255, 238, 137, 130),
+                      ),
                       title: const Text(
                         "Eliminar",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 231, 123, 116),
+                        ),
                       ),
                       onTap: () => _dialogBuilder(context, note),
                     ),
                   ),
                   Expanded(
                     child: ListTile(
-                      leading: const Icon(Icons.edit, color: Colors.blue),
+                      leading: const Icon(
+                        Icons.edit,
+                        color: Color.fromARGB(224, 147, 190, 226),
+                      ),
                       title: const Text(
                         "Editar",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(
+                          color: Color.fromARGB(224, 147, 190, 226),
+                        ),
                       ),
                       onTap: () async {
                         // abrir formulario de edición
@@ -109,8 +119,14 @@ class _Home extends State<Home> {
 
               //DUPLICATE NOTE
               ListTile(
-                leading: const Icon(Icons.copy, color: Colors.blue),
-                title: const Text("Duplicar nota"),
+                leading: const Icon(
+                  Icons.copy,
+                  color: Color.fromARGB(224, 147, 190, 226),
+                ),
+                title: const Text(
+                  "Duplicar nota",
+                  style: TextStyle(color: Color.fromARGB(224, 147, 190, 226)),
+                ),
                 onTap: () async {
                   final duplicatedNote = Note(
                     title: note.title,
@@ -134,10 +150,13 @@ class _Home extends State<Home> {
                       ? Icons.push_pin
                       : Icons
                             .push_pin_outlined, // If notes is pinned, show icon pin
-                  color: Colors.orange,
+                  color: const Color.fromARGB(255, 243, 207, 152),
                 ),
                 title: Text(
                   note.isPinned ? "Desfijar nota" : "Fijar nota",
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 243, 207, 152),
+                  ),
                 ), //If the note is pinned, show Unpin not", otherwise show in note
                 onTap: () async {
                   final updatedNote = Note(
@@ -397,18 +416,47 @@ class _Home extends State<Home> {
   Future<void> _dialogBuilder(BuildContext context, Note note) {
     return showDialog<void>(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Eliminar nota',
-            style: TextStyle(color: Colors.red),
+          backgroundColor: const Color(0xFFF8F9FB),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
           ),
-          content: const Text("¿Seguro que quieres eliminar esta nota?"),
+
+          title: const Text(
+            textAlign: TextAlign.center,
+            'Eliminar nota',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Color.fromARGB(255, 238, 137, 130),
+            ),
+          ),
+          content: const Text(
+            "¿Seguro que quieres eliminar esta nota?",
+            style: TextStyle(
+              fontSize: 15,
+              height: 1.4,
+
+              color: Color(0xFF444444),
+            ),
+          ),
+
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
+          ),
+
+          actionsAlignment: MainAxisAlignment.center,
           actions: <Widget>[
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 238, 137, 130),
+              ),
               child: const Text(
                 "Aceptar",
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
               onPressed: () async {
                 await DatabaseService.instance.deleteNote(
@@ -419,10 +467,14 @@ class _Home extends State<Home> {
                 loadNotes();
               },
             ),
+
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF6C7A89),
+              ),
               child: const Text(
                 "Cancelar",
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(fontWeight: FontWeight.w500),
               ),
               onPressed: () {
                 Navigator.of(context).pop();

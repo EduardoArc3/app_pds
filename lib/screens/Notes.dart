@@ -16,6 +16,7 @@ class _Addnotes extends State<Addnotes> {
   title; //TextEditingController get the text of TextField
   late final TextEditingController content;
   late Color selectedColor;
+  String? titleError;
 
   bool get isEditing => widget.editingNote != null;
 
@@ -53,8 +54,10 @@ class _Addnotes extends State<Addnotes> {
 
   //Execute [Aceptar]
   void saveNote() async {
-    if (title.text.isEmpty && content.text.isEmpty) {
-      Navigator.pop(context); //Navigator.pop(context) return a former page
+    if (title.text.trim().isEmpty) {
+      setState(() {
+        titleError = "El título es obligatorio";
+      });
       return;
     }
 
@@ -146,15 +149,27 @@ class _Addnotes extends State<Addnotes> {
                       children: [
                         TextField(
                           controller: title,
+                          onChanged: (_) {
+                            if (titleError != null) {
+                              setState(() {
+                                titleError = null;
+                              });
+                            }
+                          },
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                             color: Color(0xFF2E2E2E),
                           ),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: "Titulo",
                             border: InputBorder.none,
+                            errorText: titleError,
+                            errorStyle: const TextStyle(
+                              color: Color(0xFF9C4A4A),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
 
