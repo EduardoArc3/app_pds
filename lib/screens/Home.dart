@@ -15,17 +15,6 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  final List<Color> noteColors = [
-    const Color(0xFF8FA3C9),
-    const Color(0xFF8EC5B6),
-    const Color(0xFFA88CC5),
-    const Color(0xFFB97BA5),
-    const Color.fromARGB(255, 133, 163, 228),
-    const Color.fromARGB(255, 238, 142, 142),
-    const Color.fromARGB(255, 34, 173, 233),
-    const Color.fromARGB(255, 16, 45, 108),
-  ];
-
   TextEditingController search = TextEditingController();
 
   List<Note> filteredNotes = [];
@@ -46,6 +35,15 @@ class _Home extends State<Home> {
     final loadedNotes = data
         .map((e) => Note.fromMap(e))
         .toList(); //Convert the map in notes
+
+    loadedNotes.sort((a, b) {
+      //a, b, compare two notes at the same time
+      if (a.isPinned && !b.isPinned) return -1; // a first in the list
+      if (!a.isPinned && b.isPinned) return 1; // b first in the list
+      return b.createdAt.compareTo(
+        a.createdAt,
+      ); //compareTo() to date, more recent first
+    });
 
     setState(() {
       notes = loadedNotes;
@@ -115,16 +113,54 @@ class _Home extends State<Home> {
               ///delete
               const Divider(),
 
-              ///FIJAR
-              const ListTile(
-                leading: Icon(Icons.push_pin_outlined),
-                title: Text("Fijar nota"),
+              //DUPLICATE NOTE
+              ListTile(
+                leading: const Icon(Icons.copy, color: Colors.blue),
+                title: const Text("Duplicar nota"),
+                onTap: () async {
+                  final duplicatedNote = Note(
+                    title: note.title,
+                    description: note.description,
+                    color: note.color,
+                    createdAt: DateTime.now(), //new date
+                    isPinned: false, //NO DUPLICATE AS PIN
+                  );
+
+                  await DatabaseService.instance.insertNote(duplicatedNote);
+
+                  Navigator.pop(context);
+                  loadNotes();
+                },
               ),
 
-              ///DUPLICAR
-              const ListTile(
-                leading: Icon(Icons.copy),
-                title: Text("Duplicar nota"),
+              //PINNED NOTE
+              ListTile(
+                leading: Icon(
+                  note.isPinned
+                      ? Icons.push_pin
+                      : Icons
+                            .push_pin_outlined, // If notes is pinned, show icon pin
+                  color: Colors.orange,
+                ),
+                title: Text(
+                  note.isPinned ? "Desfijar nota" : "Fijar nota",
+                ), //If the note is pinned, show Unpin not", otherwise show in note
+                onTap: () async {
+                  final updatedNote = Note(
+                    //Copy the content
+                    id: note.id,
+                    title: note.title,
+                    description: note.description,
+                    color: note.color,
+                    createdAt: note.createdAt,
+                    isPinned: !note.isPinned,
+                  );
+
+                  await DatabaseService.instance.updateNote(updatedNote);
+
+                  Navigator.pop(context);
+                  loadNotes();
+                },
               ),
             ],
           ),
@@ -279,38 +315,56 @@ class _Home extends State<Home> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: Color(note.color),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          ///TEXT
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            padding: const EdgeInsets.all(17),
+            decoration: BoxDecoration(
+              color: Color(note.color),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  note.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
+                //TEXT
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        note.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        note.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  note.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+
+                //DATE
+                Text(formattedDate, style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
 
-          ///DATE
-          Text(formattedDate, style: const TextStyle(fontSize: 12)),
+          //ICONO PIN (only if is pinned)
+          if (note.isPinned)
+            const Positioned(
+              top: 10,
+              right: 14,
+              child: Icon(
+                Icons.push_pin,
+                size: 30,
+                color: Color.fromARGB(255, 232, 231, 231), // dorado suave
+              ),
+            ),
         ],
       ),
     );

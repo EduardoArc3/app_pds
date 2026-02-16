@@ -77,7 +77,7 @@ class _Addnotes extends State<Addnotes> {
         title: title.text,
         description: content.text,
         color: selectedColor.value,
-        createdAt: DateTime.now(), // 👈 ahora representa última modificación
+        createdAt: DateTime.now(),
         isPinned: original.isPinned,
       );
 
