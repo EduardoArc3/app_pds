@@ -122,8 +122,8 @@ class _Home extends State<Home> {
                     title: note.title,
                     description: note.description,
                     color: note.color,
-                    createdAt: DateTime.now(), //new date
-                    isPinned: false, //NO DUPLICATE AS PIN
+                    createdAt: DateTime.now(), //New date
+                    isPinned: false, //NO DUPLICATE AS PINN
                   );
 
                   await DatabaseService.instance.insertNote(duplicatedNote);
