@@ -12,11 +12,18 @@ Crear notas
 
 Tecnologias:
 
-- Flutter
-- Dart
-- SQLite
-
-
+- Flutter Flutter 3.41.0 • channel stable • https://github.com/flutter/flutter.git
+- Tools • Dart 3.11.0 • DevTools 2.54.1
+ sqflite 2.4.2
+    ├── sqflite_android 2.4.2+2
+    │   ├── sqflite_common...
+    │   └── sqflite_platform_interface...
+    ├── sqflite_common 2.5.6
+    ├── sqflite_darwin 2.4.2
+    │   ├── sqflite_common...
+    │   └── sqflite_platform_interface...
+    └── sqflite_platform_interface 2.4.0
+  
 Nuestra presentacion:
 https://www.canva.com/design/DAHBbg3mw1s/dB_KDPaML5g-WllFs94pxg/edit?utm_content=DAHBbg3mw1s&utm_campaign=designshare&utm_medium=link2&utm_source=
 
