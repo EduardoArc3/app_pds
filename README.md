@@ -1,17 +1,22 @@
 # app_pds
 
-A new Flutter project.
+Aplicación desarrollada en Flutter que permite crear, editar, eliminar y fijar notas.
+Desarrollada para la materia de Practicas de Desarrollo de Sistemas III (Programacion Movil)
 
-## Getting Started
+Caracteristicas:
 
-This project is a starting point for a Flutter application.
+Crear notas
+- Editar notas
+- Fijar notas (Pin)
+- Guardado local con SQLite
 
-A few resources to get you started if this is your first Flutter project:
+Tecnologias:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Dart
+- SQLite
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+Nuestra presentacion:
+https://www.canva.com/design/DAHBbg3mw1s/dB_KDPaML5g-WllFs94pxg/edit?utm_content=DAHBbg3mw1s&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
