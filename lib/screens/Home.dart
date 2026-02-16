@@ -75,13 +75,7 @@ class _Home extends State<Home> {
                         "Eliminar",
                         style: TextStyle(color: Colors.red),
                       ),
-                      onTap: () async {
-                        await DatabaseService.instance.deleteNote(
-                          note.id!,
-                        ); //delete from database
-                        Navigator.pop(context);
-                        loadNotes();
-                      },
+                      onTap: () => _dialogBuilder(context, note),
                     ),
                   ),
                   Expanded(
@@ -397,6 +391,47 @@ class _Home extends State<Home> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context, Note note) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Eliminar nota',
+            style: TextStyle(color: Colors.red),
+          ),
+          content: const Text("¿Seguro que quieres eliminar esta nota?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Aceptar",
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () async {
+                await DatabaseService.instance.deleteNote(
+                  note.id!,
+                ); //delete from database
+                Navigator.pop(context);
+                Navigator.of(context).pop();
+                loadNotes();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
